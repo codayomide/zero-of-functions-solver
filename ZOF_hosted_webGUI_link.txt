@@ -1,0 +1,4 @@
+Name: Ayomide Adegoke
+Matric number: 22CG031805
+Live URL: 
+GitHub repo: https://github.com/codayomide/zero-of-functions-solver

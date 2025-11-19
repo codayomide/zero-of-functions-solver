@@ -1,0 +1,85 @@
+
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>ZOF Solver</title>
+    <style>
+      body{font-family:Arial,Helvetica,sans-serif;padding:20px}
+      label{display:block;margin-top:10px}
+      input, select {padding:6px;margin-top:4px;width:100%;max-width:400px}
+      table{border-collapse:collapse;margin-top:10px}
+      td,th{border:1px solid #ccc;padding:6px}
+    </style>
+  </head>
+  <body>
+    <h1>ZOF Solver — Web GUI</h1>
+    {% if error %}
+      <div style="color:red">Error: {{error}}</div>
+    {% endif %}
+    <form method="post">
+      <label>Function f(x): <input name="expr" required placeholder="e.g. x**3-2*x-5"></label>
+      <label>Method:
+        <select name="method">
+          <option value="bisection">Bisection</option>
+          <option value="secant">Secant</option>
+          <option value="newton">Newton-Raphson</option>
+        </select>
+      </label>
+
+      <div id="interval-fields">
+        <label>a: <input name="a"></label>
+        <label>b: <input name="b"></label>
+      </div>
+
+      <div id="x0x1-fields">
+        <label>x0: <input name="x0"></label>
+        <label>x1: <input name="x1"></label>
+      </div>
+
+      <label>Derivative f'(x) (for Newton) or enter 'auto' to approximate: <input name="df_expr"></label>
+
+      <label>Tolerance: <input name="tol" value="1e-6"></label>
+      <label>Max iterations: <input name="max_iter" value="50"></label>
+
+      <button type="submit">Compute</button>
+    </form>
+
+    {% if result %}
+      <h2>Result</h2>
+      <p>Estimated root: {{result.root}}</p>
+      <p>Error estimate: {{result.error}}</p>
+
+      <h3>Iterations</h3>
+      <table>
+        <tr>
+        {% for k in result.logs[0].keys() %}
+          <th>{{k}}</th>
+        {% endfor %}
+        </tr>
+        {% for row in result.logs %}
+        <tr>
+          {% for v in row.values() %}
+          <td>{{v}}</td>
+          {% endfor %}
+        </tr>
+        {% endfor %}
+      </table>
+    {% endif %}
+
+    <script>
+      // Toggle field visibility based on method
+      const methodSelect = document.querySelector('select[name=method]');
+      const interval = document.getElementById('interval-fields');
+      const x0x1 = document.getElementById('x0x1-fields');
+      function updateFields(){
+        const m = methodSelect.value;
+        interval.style.display = (m === 'bisection') ? 'block':'none';
+        x0x1.style.display = (m === 'secant' || m === 'newton') ? 'block':'none';
+      }
+      methodSelect.addEventListener('change', updateFields);
+      updateFields();
+    </script>
+  </body>
+</html>
